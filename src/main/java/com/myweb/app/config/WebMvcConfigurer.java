@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.HandlerMethod;
@@ -39,6 +40,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * @date 2019/8/20 21:21
  * @description
  */
+@Configuration
 public class WebMvcConfigurer extends WebMvcConfigurationSupport {
 
   private final Logger logger = LoggerFactory.getLogger(WebMvcConfigurer.class);
