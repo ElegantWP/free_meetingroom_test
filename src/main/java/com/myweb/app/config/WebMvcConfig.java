@@ -41,9 +41,9 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * @description
  */
 @Configuration
-public class WebMvcConfigurer extends WebMvcConfigurationSupport {
+public class WebMvcConfig extends WebMvcConfigurationSupport {
 
-  private final Logger logger = LoggerFactory.getLogger(WebMvcConfigurer.class);
+  private final Logger logger = LoggerFactory.getLogger(WebMvcConfig.class);
 
 
   /**

@@ -2,6 +2,7 @@ package com.myweb.app;
 
 import com.myweb.app.dao.UserMapper;
 import com.myweb.app.entity.User;
+import com.myweb.app.service.YonZoneService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,10 @@ public class FreeMeetingRoomApplicationTests {
 
 	@Autowired
 	private UserMapper userMapper;
+
+	@Autowired
+	private YonZoneService yonZoneService;
+
 	@Test
 	public void contextLoads() {
 		User user = new User();
@@ -22,8 +27,8 @@ public class FreeMeetingRoomApplicationTests {
 	}
 
 	@Test
-	public void testMP(){
-		userMapper.selectById(11);
+	public void testAccessToken(){
+		String accessToken = yonZoneService.getAccessToken();
 	}
 
 }
