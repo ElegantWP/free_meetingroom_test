@@ -5,22 +5,25 @@ import com.alibaba.fastjson.JSONObject;
 import com.myweb.app.config.AppConfig;
 import com.myweb.app.core.ServiceException;
 import com.myweb.app.dto.AuthTokenResponseDto;
+import com.myweb.app.model.AppCodeMsgModel;
+import com.myweb.app.model.RequestUserModel;
+import com.myweb.app.model.UserContent;
 import com.myweb.app.model.YonZoneMsgModel;
 import com.myweb.app.service.YonZoneService;
+import com.myweb.app.utils.HttpClientUtil;
 import com.myweb.app.utils.Preconditions;
 import com.myweb.app.utils.SignHelper;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -30,6 +33,7 @@ import org.springframework.web.client.RestTemplate;
  */
 @Service
 @Slf4j
+@CacheConfig(cacheNames = "DIWORK")
 public class YonZoneServiceImpl implements YonZoneService {
 
   @Autowired
@@ -38,14 +42,26 @@ public class YonZoneServiceImpl implements YonZoneService {
   @Value("${authtokenUrl}")
   private String authUrl;
 
-  @Value("${notifyUrl")
+  @Value("${notifyUrl}")
   private String notifyUrl;
 
   @Autowired
   private RestTemplate restTemplate;
 
+  private static final String ACCESS_KEY = "access:key";
+
+  private static final String GET_CODE_MSG = "/open/diwork/app/list_by_app_code";
+
+  private static final String GET_USER_LIST = "/open/diwork/users/user_page_list";
+
+  private static final String USER_INDEX = "1";
+
+  private static final String USER_SIZE = "20";
+
   @Override
+  @Cacheable(value = ACCESS_KEY, unless = "#result == null ")
   public String getAccessToken() {
+    log.info("从网页中获取ACCESS KEY");
     Map<String, Object> params = new HashMap<>();
     // 除签名外的其他参数
     params.put("appKey", appConfig.getKey());
@@ -60,33 +76,76 @@ public class YonZoneServiceImpl implements YonZoneService {
       throw new ServiceException("签名成成错误");
     }
     params.put("signature", signature);
-
-    String param = SignHelper.getSignatureContent(params);
-    String url = appConfig.getHost() + authUrl + "?" + param;
-    AuthTokenResponseDto data = null;
+    AuthTokenResponseDto responseDto = new AuthTokenResponseDto();
     try {
-      JSONObject result = restTemplate.getForObject(url, JSONObject.class);
-      data = (AuthTokenResponseDto) result.get("data");
-    } catch (RestClientException e) {
+      String result = HttpClientUtil.get(appConfig.getHostAuth() + authUrl, params);
+      JSONObject jsonObject = JSON.parseObject(result);
+      Preconditions.checkNotNull(jsonObject.get("data"),"返回token数据为空");
+      responseDto =
+          JSONObject.toJavaObject((JSON) jsonObject.get("data"),AuthTokenResponseDto.class);
+    } catch (Exception e) {
       log.error("请求异常{}", e.getMessage());
       throw new ServiceException("授权令牌异常 请重新再试");
     }
-    return data.getAccessToken();
+    return responseDto.getAccessToken();
   }
 
   @Override
-  public String sendNotifyShare(YonZoneMsgModel model, String accessToken) {
+  public ResponseEntity<String> sendNotifyShare(YonZoneMsgModel model, String accessToken) {
     String url = appConfig.getHost() + notifyUrl + "?access_token=" + accessToken;
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<String> entity =
-        new HttpEntity<>(JSON.toJSONString(model),headers);
-    ResponseEntity<String> exchange = restTemplate
-        .exchange(url, HttpMethod.POST, entity, String.class);
-    Preconditions.checkNotNullOrBlank(exchange.getBody(), "请求失败 重新再试");
-    return null;
+    ResponseEntity<String> result = null;
+    try {
+      result = restTemplate.postForEntity(url,model,String.class);
+      log.info("测试工作通知");
+    } catch (Exception e) {
+      log.error("工作通知推送异常  原因{}",e.getMessage());
+      throw new ServiceException("推送异常 请稍后再试");
+    }
+    log.info("sendNotifyShare result:{}", result);
+    return result;
   }
 
+  @Override
+  public AppCodeMsgModel getServicesMsgList(String token, String appcode) {
+    String suffix = String.format("?access_token=%s&appCode=%s",token,appcode);
+    String url = appConfig.getHost()+GET_CODE_MSG+suffix;
+    List<AppCodeMsgModel> datas = null;
+    try {
+      String result = restTemplate.getForObject(url, String.class);
+      JSONObject jsonObject = JSON.parseObject(result);
+      Preconditions.checkNotNull(jsonObject.get("data"),"返回数据为空");
+      datas =
+          JSONObject.parseArray(jsonObject.get("data").toString(), AppCodeMsgModel.class);
+      Preconditions.checkNotEmpty(datas,"异常返回数据");
+    } catch (Exception e) {
+      log.error("获取应用的APPcode异常 请稍后再试");
+      throw new ServiceException("获取应用的APPID异常 联系管理员重试");
+    }
+    return datas.get(0);
+  }
+
+  @Override
+  public List<UserContent> getUserContentList(String accessToken) {
+    String url = appConfig.getHost()+GET_USER_LIST+"?access_token="+accessToken;
+    RequestUserModel requestUserModel =
+        RequestUserModel.builder()
+            .accessToken(accessToken)
+            .index(USER_INDEX)
+            .size(USER_SIZE)
+            .build();
+    List<UserContent> contents =null;
+    try {
+      String result = restTemplate.postForObject(url, requestUserModel, String.class);
+      JSONObject jsonObject = JSON.parseObject(result);
+      JSONObject data = (JSONObject) jsonObject.get("data");
+      contents = JSONObject
+          .parseArray(data.get("content").toString(), UserContent.class);
+    } catch (Exception e) {
+      log.error("处理数据异常 请重新再试 原因{}",e.getMessage());
+      throw new ServiceException("返回租户可用的用户异常 请重新再试");
+    }
+    return contents;
+  }
 
 
 }

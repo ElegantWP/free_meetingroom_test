@@ -2,6 +2,7 @@ package com.myweb.app.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,12 +14,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AuthTokenResponseDto {
+public class AuthTokenResponseDto implements Serializable {
 
   @ApiModelProperty("授权令牌")
   @JsonProperty("access_token")
   private String accessToken;
 
-  private String expire;
+  private Integer expire;
 
 }

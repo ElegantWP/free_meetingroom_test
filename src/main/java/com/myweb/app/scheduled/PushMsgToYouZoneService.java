@@ -1,7 +1,10 @@
 package com.myweb.app.scheduled;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.myweb.app.dao.UserMapper;
-import lombok.extern.java.Log;
+import com.myweb.app.entity.User;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -12,7 +15,7 @@ import org.springframework.stereotype.Service;
  * @description
  */
 @Service
-@Log
+@Slf4j
 public class PushMsgToYouZoneService {
 
   @Autowired
@@ -20,8 +23,9 @@ public class PushMsgToYouZoneService {
 
   @Scheduled(cron = "*/5 * * * * ?")
   public void pushMsg(){
-    System.out.println(userMapper.selectById(1));
-    log.info("执行定时任务成功。。。。。。。。。。。。");
+    List<User> username = userMapper.selectList(new QueryWrapper<User>()
+        .eq("username", "4@qq.com"));
+    log.info("执行定时任务成功。。。。。。。。。。。。{}",username);
   }
 
 }

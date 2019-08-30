@@ -1,0 +1,6 @@
+spring:
+  # 配置缓存,初始缓存容量为10,最大容量为200,过期时间(这里配置写入后过期时间为3秒)
+  cache:
+    type: caffeine
+    caffeine:
+      spec: initialCapacity=10,maximumSize=200,expireAfterWrite=7200s

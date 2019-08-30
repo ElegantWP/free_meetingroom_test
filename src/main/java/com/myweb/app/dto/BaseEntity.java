@@ -1,5 +1,7 @@
 package com.myweb.app.dto;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,11 +12,11 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class BaseEntity {
+public class BaseEntity<T> implements Serializable {
 
   private String code;
 
   private String message;
 
-  private Object data;
+  private T data;
 }
