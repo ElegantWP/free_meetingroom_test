@@ -12,6 +12,7 @@ import lombok.Data;
  * @author  wanggqf
  * @desc 会议室实体类
  */
+
 @Data
 @TableName("meetingroom")
 public class MeetingRoom {
@@ -24,7 +25,7 @@ public class MeetingRoom {
     @TableField(value = "equipment")
     private String equipment;   //会议室设备
     @TableField(value = "max_capacity")
-    private Integer max_capacity; //会议室最大可容纳人数
+    private Integer maxCapacity; //会议室最大可容纳人数
     @TableField(value = "type")
     private Integer type; //会议室类型。0：玻璃隔间；1：小型会议室；2：大型会议室
     @TableField(value = "state")

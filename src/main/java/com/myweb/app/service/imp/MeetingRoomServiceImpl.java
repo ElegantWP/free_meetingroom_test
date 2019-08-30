@@ -1,12 +1,21 @@
 package com.myweb.app.service.imp;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.myweb.app.core.ServiceException;
 import com.myweb.app.dao.MeeingRoomMapper;
 import com.myweb.app.entity.MeetingRoom;
 import com.myweb.app.service.MeetingRoomService;
+import com.myweb.app.utils.PageCondition;
+import com.myweb.app.utils.Preconditions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author  wanggqf
@@ -104,4 +113,32 @@ public class MeetingRoomServiceImpl implements MeetingRoomService {
 
     }
 
+    //按条件查询信息，并进行分页
+    @Override
+    public IPage<MeetingRoom> selectPage(PageCondition pageCondition){
+        Page<MeetingRoom> page = new Page<>();
+        if(pageCondition.getCurrentPage() != null && pageCondition.getCurrentPage().toString().trim().length() != 0){
+            page.setCurrent(pageCondition.getCurrentPage());
+        }else{
+            page.setCurrent(1);
+        }
+        page.setSize(pageCondition.getSize());
+        QueryWrapper<MeetingRoom> queryWrapper = new QueryWrapper<>();
+        if(pageCondition.getName() != null && pageCondition.getName().toString().trim().length() != 0){
+            queryWrapper.eq("name",pageCondition.getName());
+        }
+        if(pageCondition.getActive() != null && pageCondition.getActive().toString().trim().length() != 0){
+            queryWrapper.or().eq("state",pageCondition.getActive());
+        }
+        if(pageCondition.getCapacity() != null && pageCondition.getCapacity().toString().length() != 0){
+            queryWrapper.ge("max_capacity",pageCondition.getCapacity());
+        }
+        if(pageCondition.getStates() != null){
+            for (Integer state:pageCondition.getStates()) {
+                queryWrapper.or().eq("state",state);
+            }
+        }
+        IPage<MeetingRoom> rtn = mapper.selectPage(page,queryWrapper);
+        return rtn;
+    }
 }

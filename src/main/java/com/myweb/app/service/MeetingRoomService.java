@@ -1,7 +1,12 @@
 package com.myweb.app.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.myweb.app.entity.MeetingRoom;
+import com.myweb.app.utils.PageCondition;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author  wanggqf
@@ -31,5 +36,7 @@ public interface MeetingRoomService {
     MeetingRoom selectById(Integer id);
 
 
+     //条件 分页查询
+     IPage<MeetingRoom> selectPage(PageCondition pageCondition);
 
 }

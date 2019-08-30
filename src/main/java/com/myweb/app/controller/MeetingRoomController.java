@@ -9,6 +9,7 @@ import com.myweb.app.core.ResultGenerator;
 import com.myweb.app.dao.MeeingRoomMapper;
 import com.myweb.app.entity.MeetingRoom;
 import com.myweb.app.service.MeetingRoomService;
+import com.myweb.app.utils.PageCondition;
 import com.myweb.app.utils.Preconditions;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -86,14 +87,9 @@ public class MeetingRoomController {
 
     //按照其他条件 分页查询
     @PostMapping("/select")
-    public Result select(){
-//        Page<MeetingRoom>  list =  meetingRoomService.selectPage(pageMeetingInfo);
-//        return ResultGenerator.genSuccessResult();
-        Page<MeetingRoom> page = new Page<>();
-        page.setCurrent(2);
-        page.setSize(5);
-        Wrapper<MeetingRoom> queryWrapper = new QueryWrapper<>();
-        IPage<Map<String, Object>> rtn = mapper.selectMapsPage(page,queryWrapper);
+    public Result select(@RequestBody PageCondition pageCondition){
+
+        IPage<MeetingRoom> rtn = meetingRoomService.selectPage(pageCondition);
         return ResultGenerator.genSuccessResult(rtn);
     }
 }
