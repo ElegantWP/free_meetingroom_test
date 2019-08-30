@@ -1,5 +1,8 @@
 package com.myweb.app;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.myweb.app.config.AppConfig;
 import com.myweb.app.dao.UserMapper;
 import com.myweb.app.entity.User;
@@ -31,9 +34,17 @@ public class FreeMeetingRoomApplicationTests {
 
 	@Test
 	public void contextLoads() {
-		User user = new User();
-		user.setSex(12);
-		userMapper.insert(user);
+		List<User> users = userMapper.selectList(null);
+		System.out.println(users);
+		QueryWrapper<User> wrapper = new QueryWrapper<>();
+		int page = 1;
+		int pageSize = 4;
+		IPage<User> pageUsers = userMapper.selectPage(new Page<>(page, pageSize)
+				, new QueryWrapper<User>().eq("email","1"));
+		System.out.println(pageUsers);
+		System.out.println(pageUsers.getRecords());
+		System.out.println(pageUsers.getSize());
+		System.out.println(pageUsers.getCurrent());
 	}
 
 	@Test
@@ -71,12 +82,12 @@ public class FreeMeetingRoomApplicationTests {
 	@Test
 	public void testLamdba(){
 		List<User> users = userMapper.selectList(null);
-		List<String> results = users.stream().distinct().filter(item -> null != item.getNickName())
-				.map(User::getNickName)
+		List<String> results = users.stream().distinct().filter(item -> null != item.getUnknown())
+				.map(User::getUnknown)
 				.collect(Collectors.toList());
 		List<String> collect =
-				users.stream().distinct().filter(item -> null != item.getPassword())
-						.map(User::getPassword).collect(Collectors.toList());
+				users.stream().distinct().filter(item -> null != item.getUserCode())
+						.map(User::getUserCode).collect(Collectors.toList());
 		results.addAll(collect);
 		System.out.println(results);
 		results.stream().distinct();

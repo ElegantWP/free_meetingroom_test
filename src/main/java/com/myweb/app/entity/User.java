@@ -14,14 +14,12 @@ public class User {
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
-    @TableField(value = "username")
+    @TableField(value = "user_name")
     private String username;
+    @TableField(value = "user_code")
+    private String userCode;
 
-    private String password;
-
-    private String nickName;
-
-    private Integer sex;
+    private String unknown;
     @JsonFormat(pattern="yyyyMMddHHmmssSSS", timezone="GMT+8")
-    private Date registerDate;
+    private Date createTime;
 }

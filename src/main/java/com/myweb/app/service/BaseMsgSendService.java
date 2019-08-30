@@ -1,6 +1,7 @@
 package com.myweb.app.service;
 
 import com.alibaba.fastjson.JSON;
+import com.myweb.app.core.ServiceException;
 import com.myweb.app.dto.MsgGeneratorDto;
 import com.myweb.app.dto.PushedListDto;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +21,8 @@ public class BaseMsgSendService {
 	 * 生成待发送消息
 	 * 
 	 * @param userId：userId
-	 * @param cid：cid
-	 * @param msgTypeId:消息类型
+	 * @param ：cid
+	 * @param :消息类型
 	 * @param title：消息标题
 	 * @param brief：消息简称
 	 * @param content:消息内容
@@ -35,8 +36,9 @@ public class BaseMsgSendService {
 			PushedListDto pushedListDto = generatorPushedListDto(userId, title, brief, content, bussinessParams);
 			ret.setPushedListDto(pushedListDto);
 		} catch (Exception e) {
-			e.printStackTrace();
 			ret.setErrMsg(e.getMessage());
+			log.error("生成待发送消息失败{}",ret.toString());
+			throw new ServiceException("消息发送失败 请联系管理员重新再试");
 		}
 		return ret;
 	}
@@ -49,7 +51,7 @@ public class BaseMsgSendService {
 	 * @param brief：消息简称
 	 * @param content:消息内容
 	 * @param bussinessParams：业务参数
-	 * @param messageType：消息类型
+	 * @param ：消息类型
 	 * @return
 	 */
 	protected PushedListDto generatorPushedListDto(String userId, String title, String brief, String content, Map<String, String> bussinessParams) {
@@ -64,7 +66,7 @@ public class BaseMsgSendService {
 	 * @param brief：消息简称
 	 * @param content:消息内容
 	 * @param bussinessParams：业务参数
-	 * @param messageType：消息类型
+	 * @param ：消息类型
 	 * @return
 	 */
 	protected PushedListDto generatorPushedListDto(String userId, String title, String brief, String content, String bussinessParams) {

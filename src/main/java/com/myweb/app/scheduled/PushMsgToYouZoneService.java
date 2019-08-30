@@ -23,9 +23,9 @@ public class PushMsgToYouZoneService {
 
   @Scheduled(cron = "*/5 * * * * ?")
   public void pushMsg(){
-    List<User> username = userMapper.selectList(new QueryWrapper<User>()
-        .eq("username", "4@qq.com"));
-    log.info("执行定时任务成功。。。。。。。。。。。。{}",username);
+//    List<User> username = userMapper.selectList(new QueryWrapper<User>()
+//        .eq("username", "4@qq.com"));
+    log.info("执行定时任务成功。。。。。。。。。。。。");
   }
 
 }
