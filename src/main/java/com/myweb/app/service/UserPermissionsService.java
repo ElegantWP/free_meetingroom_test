@@ -1,5 +1,6 @@
 package com.myweb.app.service;
 
+import com.myweb.app.core.Result;
 import com.myweb.app.entity.UserPermissions;
 
 /**
@@ -10,5 +11,5 @@ public interface UserPermissionsService {
 
     UserPermissions getUserPermissions(Long userId);
 
-    void saveUserPermissions(Long userId);
+    Result saveUserPermissions(Long userId,Integer type);
 }

@@ -1,7 +1,11 @@
 package com.myweb.app.controller;
 
+import com.myweb.app.core.Result;
 import com.myweb.app.core.ServiceException;
+import com.myweb.app.dao.UserPermissionsMapper;
+import com.myweb.app.entity.UserPermissions;
 import com.myweb.app.model.UserContent;
+import com.myweb.app.service.UserPermissionsService;
 import com.myweb.app.service.YonZoneService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +25,8 @@ import java.util.List;
 public class PermissionController {
     @Autowired
     YonZoneService yonZoneService;
+    @Autowired
+    UserPermissionsService userPermissionsService;
 
     /**
      * 添加管理员
@@ -31,26 +37,32 @@ public class PermissionController {
      */
 
     /**
-     * 增加权限
+     * 保存权限
+     * @param userId
+     * @param type
      */
-    @RequestMapping(value = "/save",method = RequestMethod.POST)
-    public void saveDefaultPermissions() {
-        List<UserContent> userContents = yonZoneService.getUserContentList(yonZoneService.getAccessToken());
-        if(CollectionUtils.isEmpty(userContents)){
-            throw  new ServiceException("未获取到该登录用户信息!");
-        }
-
-
-
-
+    @RequestMapping(value = "/save/permissions",method = RequestMethod.POST)
+    public Result saveDefaultPermissions(Long userId, Integer type) {
+        return userPermissionsService.saveUserPermissions(userId,type);
     }
 
     /**
      * 修改权限
      */
 
+    @RequestMapping(value = "/get/permissions",method = RequestMethod.GET)
+    public UserPermissions getUserPermissions() {
+        UserContent userContent = yonZoneService.getUserContent(yonZoneService.getAccessToken());
+        if(null == userContent){
+            throw new ServiceException("未获取到该登录用户信息!");
+        }
+        Long userId = Long.parseLong(userContent.getUserId());
+        if(null == userId){
+            throw new ServiceException("当前登录用户信息不全，无法权限操作!");
+        }
+        UserPermissions userPermissions = new UserPermissions();
+        userPermissions = userPermissionsService.getUserPermissions(userId);
+        return  userPermissions;
+    }
 
-    /**
-     * 删除权限
-     */
 }
