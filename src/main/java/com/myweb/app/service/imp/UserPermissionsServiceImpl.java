@@ -10,6 +10,8 @@ import com.myweb.app.entity.MeetingRoom;
 import com.myweb.app.entity.UserPermissions;
 import com.myweb.app.enums.UserPermissionsTypeEnum;
 import com.myweb.app.service.UserPermissionsService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,8 @@ import java.time.format.DateTimeFormatter;
  * @since 2019/8/31 23:51
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class UserPermissionsServiceImpl implements UserPermissionsService {
     Logger logger = LoggerFactory.getLogger(UserPermissionsServiceImpl.class);
 
