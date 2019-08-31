@@ -147,5 +147,10 @@ public class YonZoneServiceImpl implements YonZoneService {
     return contents;
   }
 
+  @Override
+  public UserContent getUserContent(String accessToken) {
+    return null;
+  }
+
 
 }

@@ -38,5 +38,7 @@ public interface YonZoneService {
 
   List<UserContent> getUserContentList(String accessToken);
 
+  UserContent getUserContent(String accessToken);
+
 
 }
