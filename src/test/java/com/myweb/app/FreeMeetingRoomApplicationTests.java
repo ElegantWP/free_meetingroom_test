@@ -5,10 +5,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.myweb.app.config.AppConfig;
 import com.myweb.app.dao.UserMapper;
+import com.myweb.app.dto.PushedListDto;
 import com.myweb.app.entity.User;
 import com.myweb.app.model.AppCodeMsgModel;
 import com.myweb.app.model.YonZoneMsgModel;
+import com.myweb.app.rabbitmq.delay.DelayMsgPublisher;
 import com.myweb.app.service.YonZoneService;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -93,4 +96,17 @@ public class FreeMeetingRoomApplicationTests {
 		results.stream().distinct();
 		System.out.println(results);
 	}
+
+	@Test
+	public void testSubString(){
+		List<String> list = Arrays.asList("TAX1","TAX2","TAX3");
+		List<String> newList = new ArrayList<>();
+		list
+				.forEach(item -> {
+					String s = item.replace("TAX","");
+					newList.add(s);
+				});
+		System.out.println(newList);
+	}
+
 }
