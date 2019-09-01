@@ -8,6 +8,7 @@ import com.myweb.app.core.Result;
 import com.myweb.app.core.ResultGenerator;
 import com.myweb.app.dao.MeeingRoomMapper;
 import com.myweb.app.entity.MeetingRoom;
+import com.myweb.app.entity.ScreenEntity;
 import com.myweb.app.service.MeetingRoomService;
 import com.myweb.app.utils.PageCondition;
 import com.myweb.app.utils.Preconditions;
@@ -91,5 +92,12 @@ public class MeetingRoomController {
 
         IPage<MeetingRoom> rtn = meetingRoomService.selectPage(pageCondition);
         return ResultGenerator.genSuccessResult(rtn);
+    }
+
+    //会议室的投屏信息
+    @GetMapping("/getScreen")
+    public Result getScreen(Integer layer,Integer currentPage){//那座，第几页
+        IPage<ScreenEntity> rtn = meetingRoomService.getScreen(layer,currentPage);
+        return  ResultGenerator.genSuccessResult(rtn);
     }
 }
