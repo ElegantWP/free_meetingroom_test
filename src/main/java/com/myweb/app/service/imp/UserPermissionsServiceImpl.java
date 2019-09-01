@@ -63,6 +63,7 @@ public class UserPermissionsServiceImpl implements UserPermissionsService {
         userPermissions.setCreatedTime(LocalDateTime.parse(LocalDateTime.now().toString(),df));
         //若改用户权限已存在则更新
         if(null != getUserPermissions(userId)){
+            update = true;
             userPermissions= getUserPermissions(userId);
             if(null == userPermissions){
                 throw new ServiceException("查找当前用户信息失败!");
@@ -70,7 +71,6 @@ public class UserPermissionsServiceImpl implements UserPermissionsService {
             logger.info("【UserPermissionsServiceImpl】【saveUserPermissions】原数据权限信息：{}",JSON.toJSONString(userPermissions));
             //若权限类型不为空则更新，否则保持原权限类型
             if(null !=type){
-                update = true;
                 userPermissions.setType(UserPermissionsTypeEnum.find(type));
                 userPermissions.setModifyTime(LocalDateTime.parse(LocalDateTime.now().toString(),df));
             }
@@ -78,7 +78,15 @@ public class UserPermissionsServiceImpl implements UserPermissionsService {
         String saveStatus = "新增权限";
         saveStatus = update==true?"更新权限":saveStatus;
         logger.info("【UserPermissionsServiceImpl】【saveUserPermissions】保存前权限对象信息,操作名称;{},userPermissions：{}",saveStatus,JSON.toJSONString(userPermissions));
-        int resultNum = mapper.insert(userPermissions);
+        int resultNum = 0;
+        if(update){
+            if(null !=type){
+                resultNum= mapper.updateById(userPermissions);
+            }
+        }
+        if(!update){
+           resultNum= mapper.insert(userPermissions);
+        }
         Result result = new Result();
         return  result = resultNum==1 ? ResultGenerator.genSuccessResult():ResultGenerator.genFailResult("保存用户权限失败!");
     }

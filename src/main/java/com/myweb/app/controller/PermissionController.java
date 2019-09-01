@@ -47,7 +47,7 @@ public class PermissionController {
     }
 
     /**
-     * 修改权限
+     * 登录获取权限
      */
 
     @RequestMapping(value = "/get/permissions",method = RequestMethod.GET)
@@ -60,6 +60,8 @@ public class PermissionController {
         if(null == userId){
             throw new ServiceException("当前登录用户信息不全，无法权限操作!");
         }
+        //首次登录权限表没有改用户数据
+        userPermissionsService.saveUserPermissions(userId,null);
         UserPermissions userPermissions = new UserPermissions();
         userPermissions = userPermissionsService.getUserPermissions(userId);
         return  userPermissions;
