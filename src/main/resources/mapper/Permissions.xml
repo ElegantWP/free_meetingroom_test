@@ -5,7 +5,7 @@
         <id column="id" jdbcType="BIGINT" property="id" />
         <result column="iType" jdbcType="INTEGER" property="type"/>
         <result column="iUserId" jdbcType="BIGINT" property="userId" />
-        <result column="dCreatedTime" jdbcType="DATETIME" property="createdTime" />
-        <result column="dModifyTime" jdbcType="DATETIME" property="modifyTime" />
+        <result column="dCreatedTime" jdbcType="TIMESTAMP" property="createdTime" />
+        <result column="dModifyTime" jdbcType="TIMESTAMP" property="modifyTime" />
     </resultMap>
 </mapper>
