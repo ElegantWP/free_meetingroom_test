@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -28,12 +29,23 @@ public class DelayMsgSendService extends BaseMsgSendService{
 	private DelayMsgPublisher delayMsgPublisher;
 
 	/**
-	 * 延迟15分钟后发送消息
-	 * @param msgDto
+	 * 延迟30分钟后发送消息
+	 * @param pushedListDto
 	 */
-	public void pushMsgDelay15Minutes(MsgDto msgDto) {
-		pushMsgAtTargetTime(msgDto.getUserId(),  msgDto.getMsgTypeId(), msgDto.getTitle(), msgDto.getBrief(),
-				msgDto.getContent(), msgDto.getBussinessParams(), new Timestamp(new Date().getTime()+15*60*1000));
+	public void pushMsgDelay30Minutes(PushedListDto pushedListDto) {
+		checkData(pushedListDto);
+		Timestamp targetTime = new Timestamp(new Date().getTime()+30*60*1000);
+		long expire = targetTime.getTime() - System.currentTimeMillis();
+		log.info("pushedListDto:"+pushedListDto);
+		delayMsgPublisher.pushMsg(pushedListDto, expire);
+	}
+
+	public void checkData(PushedListDto pushedListDto){
+		Assert.notNull(pushedListDto,"发送消息实体不能为空!");
+		Assert.hasText(pushedListDto.getAccesstoken(),"accessToken不能为空!");
+		Assert.hasText(pushedListDto.getUserId(),"userId不能为空!");
+		Assert.hasText(pushedListDto.getTenantId(),"tenantId不能未空!");
+		Assert.notNull(pushedListDto.getRoomId(),"roomId不能为空!");
 	}
 
 	/**
