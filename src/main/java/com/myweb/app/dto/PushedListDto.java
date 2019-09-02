@@ -24,7 +24,22 @@ public class PushedListDto {
      */
     @Size(max = 40)
     private String userId;
-    
+
+    /**
+     * 会议室ID
+     */
+    private Integer roomId;
+
+    /**
+     * Token
+     */
+    private String accesstoken;
+
+    /**
+     * 租户ID
+     */
+    private String tenantId;
+
     /**
      * 用户ID
      */
