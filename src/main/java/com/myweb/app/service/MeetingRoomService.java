@@ -2,6 +2,7 @@ package com.myweb.app.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.myweb.app.entity.MeetingRoom;
+import com.myweb.app.entity.ScreenEntity;
 import com.myweb.app.utils.PageCondition;
 import org.springframework.stereotype.Service;
 
@@ -39,4 +40,6 @@ public interface MeetingRoomService {
      //条件 分页查询
      IPage<MeetingRoom> selectPage(PageCondition pageCondition);
 
+     //分页获取 投屏信息
+    IPage<ScreenEntity> getScreen(Integer layer,Integer currentPage);
 }

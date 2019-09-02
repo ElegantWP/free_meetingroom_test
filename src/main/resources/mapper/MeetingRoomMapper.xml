@@ -9,8 +9,18 @@
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="location" jdbcType="VARCHAR" property="location" />
         <result column="equipment" jdbcType="VARCHAR" property="equipment" />
-        <result column="max_capacity" jdbcType="INTEGER" property="max_capacity" />
+        <result column="max_capacity" jdbcType="INTEGER" property="maxCapacity" />
         <result column="state" jdbcType="INTEGER" property="state" />
-        <result column="type" jdbcType="INTEGER" property="type" />
+        <result column="open_time" jdbcType="INTEGER" property="openTime" />
+        <result column="close_time" jdbcType="INTEGER" property="closeTime" />
     </resultMap>
+    
+    <select id="getScreen" resultType="com.myweb.app.entity.ScreenEntity">
+        SELECT b.name,a.topic,a.reservation_time,a.start_time,a.end_time,b.state
+        from meeting_record a LEFT JOIN
+        meetingroom b on  a.meetingroom_id = b.name
+        where a.meetingroom_id like '%${layer}%'
+        and now() &gt;  CONCAT(a.reservation_time,' 00:00:00')
+        and now() &lt; CONCAT(a.reservation_time,' 23:59:59')
+    </select>
 </mapper>

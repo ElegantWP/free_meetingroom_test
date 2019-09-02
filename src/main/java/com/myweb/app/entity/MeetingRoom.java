@@ -30,4 +30,9 @@ public class MeetingRoom {
     private Integer type; //会议室类型。0：玻璃隔间；1：小型会议室；2：大型会议室
     @TableField(value = "state")
     private Integer state;//会议室状态。0：可用；1：使用中；2：已暂停使用
+    @TableField(value = "open_time")
+    private String openTime;
+    @TableField(value = "close_time")
+    private String closeTime;
+
 }
