@@ -45,10 +45,11 @@ public class PermissionController {
         return userPermissionsService.saveUserPermissions(userId,type);
     }
 
+
     /**
      * 登录获取权限
+     * @return
      */
-
     @RequestMapping(value = "/get/permissions",method = RequestMethod.GET)
     public UserPermissions getUserPermissions() {
         UserContent userContent = yonZoneService.getUserContent(yonZoneService.getAccessToken());
@@ -67,6 +68,11 @@ public class PermissionController {
     }
 
 
+    /**
+     * 获取权限列表信息
+     * @param selectInfo
+     * @return
+     */
     @RequestMapping(value = "/get/all/infos",method = RequestMethod.GET)
     public Map<String,Object> getAllUserInfos(@PathVariable(name = "selectInfo") String selectInfo) {
         return  null;
