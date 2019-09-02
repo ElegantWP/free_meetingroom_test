@@ -10,13 +10,12 @@ import com.myweb.app.service.YonZoneService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Api(value = "权限相关操作")
@@ -42,7 +41,7 @@ public class PermissionController {
      * @param type
      */
     @RequestMapping(value = "/save/permissions",method = RequestMethod.POST)
-    public Result saveDefaultPermissions(Long userId, Integer type) {
+    public Result saveDefaultPermissions(@RequestParam("userId") Long userId,@RequestParam("type") Integer type) {
         return userPermissionsService.saveUserPermissions(userId,type);
     }
 
@@ -66,5 +65,13 @@ public class PermissionController {
         userPermissions = userPermissionsService.getUserPermissions(userId);
         return  userPermissions;
     }
+
+
+    @RequestMapping(value = "/get/all/infos",method = RequestMethod.GET)
+    public Map<String,Object> getAllUserInfos(@PathVariable(name = "selectInfo") String selectInfo) {
+        return  null;
+    }
+
+
 
 }
