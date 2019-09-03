@@ -16,6 +16,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -44,6 +45,8 @@ public class PushMsgToYouZoneService {
 
   @Autowired
   private ApplicationContext context;
+
+  private static final String CACHEKEY = "cache";
 
   /**
    * 会议开始15分钟发送消息
@@ -85,7 +88,7 @@ public class PushMsgToYouZoneService {
    * 原因Spring的动态代理的差异
    * @return
    */
-  @Cacheable(value = "record", unless = "#result == null ")
+  @Cacheable(value = "record",unless = "#result == null ")
   public List<MeetingRecord> getAllMeetingRecord(){
     log.info("从数据库获取数据");
     return meetingRecordMapper.selectList(null);

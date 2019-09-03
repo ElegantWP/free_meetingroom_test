@@ -13,8 +13,11 @@ import com.myweb.app.entity.User;
 import com.myweb.app.model.AppCodeMsgModel;
 import com.myweb.app.model.YonZoneMsgModel;
 import com.myweb.app.scheduled.PushMsgToYouZoneService;
+import com.myweb.app.service.MeetRecordService;
 import com.myweb.app.service.YonZoneService;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.ToString;
@@ -33,6 +36,9 @@ public class FreeMeetingRoomApplicationTests {
 
 	@Autowired
 	private YonZoneService yonZoneService;
+
+	@Autowired
+	private MeetRecordService meetRecordService;
 
 	@Autowired
 	private AppConfig appConfig;
@@ -127,4 +133,19 @@ public class FreeMeetingRoomApplicationTests {
     System.out.println(s1);
     System.out.println(nowDateMMSS);
   }
+
+  @Test
+	public void test(){
+		List<MeetingRecord> d123 = meetRecordService.getCreateIdByMeetingRoomId(Arrays.asList("E205"));
+		System.out.println(d123);
+		List<String> str = new ArrayList<>();
+		d123.stream().forEach(
+				item ->{
+					str.add(item.getCreatorId());
+					String[] s = item.getInvolvedPersons().split(" ");
+					Collections.addAll(str,s);
+				}
+		);
+		System.out.println(str);
+	}
 }
