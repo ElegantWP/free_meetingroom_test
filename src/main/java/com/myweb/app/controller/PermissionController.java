@@ -51,7 +51,7 @@ public class PermissionController {
      * @return
      */
     @RequestMapping(value = "/get/permissions",method = RequestMethod.GET)
-    public UserPermissions getUserPermissions() {
+    public UserPermissions getUserPermissions(@PathVariable(name = "code") String code) {
 //        UserContent userContent = yonZoneService.getUserContent(yonZoneService.getAccessToken(),"code");
 //        if(null == userContent){
 //            throw new ServiceException("未获取到该登录用户信息!");
