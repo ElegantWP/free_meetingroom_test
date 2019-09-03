@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.myweb.app.config.AppConfig;
 import com.myweb.app.core.ServiceException;
 import com.myweb.app.dto.AuthTokenResponseDto;
+import com.myweb.app.dto.YouZoneUser;
 import com.myweb.app.model.AppCodeMsgModel;
 import com.myweb.app.model.RequestUserModel;
 import com.myweb.app.model.UserContent;
@@ -17,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
@@ -54,6 +54,7 @@ public class YonZoneServiceImpl implements YonZoneService {
 
   private static final String GET_USER_LIST = "/open/diwork/users/user_page_list";
 
+  private final static String URL_FREE_LOGIN = "/open/diwork/freelogin/base_info_by_code";
   private static final String USER_INDEX = "1";
 
   private static final String USER_SIZE = "20";
@@ -148,8 +149,21 @@ public class YonZoneServiceImpl implements YonZoneService {
   }
 
   @Override
-  public UserContent getUserContent(String accessToken) {
-    return null;
+  public YouZoneUser getUserContent(String code, String accessToken) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("access_token", accessToken);
+    params.put("code", code);
+    String result = null;
+    try {
+      result = HttpClientUtil.get(appConfig.getHost() + URL_FREE_LOGIN, params);
+    } catch (Exception e) {
+      log.error("获取失败",e.getMessage());
+      throw new RuntimeException("失败");
+    }
+    JSONObject jsonObject = JSON.parseObject(result);
+    YouZoneUser data = JSONObject.parseObject(jsonObject.get("data").toString(), YouZoneUser.class);
+    log.info("用户数据{}", data);
+    return data;
   }
 
 

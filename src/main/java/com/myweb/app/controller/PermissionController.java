@@ -52,19 +52,20 @@ public class PermissionController {
      */
     @RequestMapping(value = "/get/permissions",method = RequestMethod.GET)
     public UserPermissions getUserPermissions() {
-        UserContent userContent = yonZoneService.getUserContent(yonZoneService.getAccessToken());
-        if(null == userContent){
-            throw new ServiceException("未获取到该登录用户信息!");
-        }
-        Long userId = Long.parseLong(userContent.getUserId());
-        if(null == userId){
-            throw new ServiceException("当前登录用户信息不全，无法权限操作!");
-        }
-        //首次登录权限表没有改用户数据
-        userPermissionsService.saveUserPermissions(userId,null);
-        UserPermissions userPermissions = new UserPermissions();
-        userPermissions = userPermissionsService.getUserPermissions(userId);
-        return  userPermissions;
+//        UserContent userContent = yonZoneService.getUserContent(yonZoneService.getAccessToken(),"code");
+//        if(null == userContent){
+//            throw new ServiceException("未获取到该登录用户信息!");
+//        }
+//        Long userId = Long.parseLong(userContent.getUserId());
+//        if(null == userId){
+//            throw new ServiceException("当前登录用户信息不全，无法权限操作!");
+//        }
+//        //首次登录权限表没有改用户数据
+//        userPermissionsService.saveUserPermissions(userId,null);
+//        UserPermissions userPermissions = new UserPermissions();
+//        userPermissions = userPermissionsService.getUserPermissions(userId);
+//        return  userPermissions;
+        return null;
     }
 
 

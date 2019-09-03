@@ -1,5 +1,6 @@
 package com.myweb.app.service;
 
+import com.myweb.app.dto.YouZoneUser;
 import com.myweb.app.model.AppCodeMsgModel;
 import com.myweb.app.model.UserContent;
 import com.myweb.app.model.YonZoneMsgModel;
@@ -38,7 +39,5 @@ public interface YonZoneService {
 
   List<UserContent> getUserContentList(String accessToken);
 
-  UserContent getUserContent(String accessToken);
-
-
+  YouZoneUser getUserContent(String code,String accessToken);
 }

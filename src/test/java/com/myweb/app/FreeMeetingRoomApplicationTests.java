@@ -1,20 +1,23 @@
 package com.myweb.app;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.myweb.app.config.AppConfig;
+import com.myweb.app.dao.MeetingRecordMapper;
 import com.myweb.app.dao.UserMapper;
-import com.myweb.app.dto.PushedListDto;
+import com.myweb.app.entity.MeetingRecord;
+import com.myweb.app.entity.MeetingRoom;
 import com.myweb.app.entity.User;
 import com.myweb.app.model.AppCodeMsgModel;
 import com.myweb.app.model.YonZoneMsgModel;
-import com.myweb.app.rabbitmq.delay.DelayMsgPublisher;
+import com.myweb.app.scheduled.PushMsgToYouZoneService;
 import com.myweb.app.service.YonZoneService;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.ToString;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,9 @@ public class FreeMeetingRoomApplicationTests {
 
 	@Autowired
 	private AppConfig appConfig;
+
+	@Autowired
+	private MeetingRecordMapper meetingRecord;
 
 
 	@Test
@@ -99,14 +105,26 @@ public class FreeMeetingRoomApplicationTests {
 
 	@Test
 	public void testSubString(){
-		List<String> list = Arrays.asList("TAX1","TAX2","TAX3");
-		List<String> newList = new ArrayList<>();
-		list
-				.forEach(item -> {
-					String s = item.replace("TAX","");
-					newList.add(s);
-				});
-		System.out.println(newList);
+		yonZoneService.getUserContent("c2bae2acde4976d2fca1c2dd5c08110b9fe0ce76cbe5b56648dda5f26b2a",yonZoneService.getAccessToken());
 	}
 
+	@Test
+	public void testTTT(){
+		YonZoneMsgModel yonZoneMsgModel = new YonZoneMsgModel();
+		System.out.println(JSON.toJSONString(yonZoneMsgModel));
+	}
+
+	@Test
+	public void testMMM(){
+		List<MeetingRecord> meetingRecords = meetingRecord.selectList(null);
+		System.out.println(meetingRecords);
+	}
+
+	@Test
+	public void testMMMMM(){
+    String s1 = PushMsgToYouZoneService.generateTimePeriod("2019-09-03", "10:00");
+    String nowDateMMSS = PushMsgToYouZoneService.getNowDateMMSS();
+    System.out.println(s1);
+    System.out.println(nowDateMMSS);
+  }
 }
