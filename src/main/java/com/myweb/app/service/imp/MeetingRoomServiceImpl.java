@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.myweb.app.core.ServiceException;
-import com.myweb.app.dao.MeeingRoomMapper;
+import com.myweb.app.dao.MeetingRoomMapper;
 import com.myweb.app.entity.MeetingRoom;
 import com.myweb.app.entity.ScreenEntity;
 import com.myweb.app.service.MeetingRoomService;
@@ -13,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +28,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class MeetingRoomServiceImpl implements MeetingRoomService {
 
-    private final MeeingRoomMapper mapper;
+    private final MeetingRoomMapper mapper;
     //新增
     @Override
     public int add(MeetingRoom room) {
@@ -62,14 +65,55 @@ public class MeetingRoomServiceImpl implements MeetingRoomService {
     @Override
     public int disable(Integer id) {
         Integer rtn = 0;
-        MeetingRoom room = new MeetingRoom();
-        room.setId(id);
-        room.setState(2);
         try{
             rtn =  mapper.deleteById(id);//直接删除
         }catch (Exception e){
             log.error("停用会议室错误,原因:{}",e.getMessage());
             throw new ServiceException("停用会议室错误");
+        }
+        return rtn;
+    }
+
+    //预定
+    @Override
+    public int order(Integer id) {
+        Integer rtn = 0;
+        MeetingRoom room = new MeetingRoom();
+        room.setId(id);
+        room.setState(3);
+        try{
+            QueryWrapper<MeetingRoom> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("id",id);
+            MeetingRoom room1 = mapper.selectOne(queryWrapper);
+            if(room1.getState() != 0){
+                throw new ServiceException("会议室不是可用状态，不能预定");
+            }
+            rtn =  mapper.updateById(room);
+        }catch (Exception e){
+            log.error("使用会议室错误,原因:{}",e.getMessage());
+            throw new ServiceException("使用会议室错误");
+        }
+        return rtn;
+    }
+
+    //取消预定，只有预定状态下可以
+    @Override
+    public int unOrder(Integer id) {
+        Integer rtn = 0;
+        MeetingRoom room = new MeetingRoom();
+        room.setId(id);
+        room.setState(1);
+        try{
+            QueryWrapper<MeetingRoom> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("id",id);
+            MeetingRoom room1 = mapper.selectOne(queryWrapper);
+            if(room1.getState() != 3){
+                throw new ServiceException("会议室不是预定状态，不能取消");
+            }
+            rtn =  mapper.updateById(room);
+        }catch (Exception e){
+            log.error("使用会议室错误,原因:{}",e.getMessage());
+            throw new ServiceException("使用会议室错误");
         }
         return rtn;
     }
@@ -85,8 +129,10 @@ public class MeetingRoomServiceImpl implements MeetingRoomService {
             QueryWrapper<MeetingRoom> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("id",id);
             MeetingRoom room1 = mapper.selectOne(queryWrapper);
-            if(room.getState() == 1){
+            if(room1.getState() == 1){
                 throw new ServiceException("会议室已经为使用状态");
+            }else if(room1.getState() != 3){
+                throw new ServiceException("没有预定不能直接使用会议室");
             }
             rtn =  mapper.updateById(room);
         }catch (Exception e){
@@ -107,8 +153,12 @@ public class MeetingRoomServiceImpl implements MeetingRoomService {
             QueryWrapper<MeetingRoom> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("id",id);
             MeetingRoom room1= mapper.selectOne(queryWrapper);
-            if(room1.getState() == 0){
-                throw new ServiceException("会议室已经为空闲状态");
+            if(room1.getState() != 1){
+                throw new ServiceException("会议室未在使用，不能释放");
+            }
+            boolean flag = isOrderState(id);
+            if(!flag){
+                room.setState(3);
             }
             rtn =  mapper.updateById(room);
         }catch (Exception e){
@@ -159,15 +209,35 @@ public class MeetingRoomServiceImpl implements MeetingRoomService {
         return rtn;
     }
 
-    //分页获取 投屏 信息
-    public IPage<ScreenEntity> getScreen(Integer layer, Integer currentPage){
-        Page<ScreenEntity> page = new Page<>();
-        if(currentPage != null && currentPage.toString().trim().length() != 0){
-            page.setCurrent(currentPage);
-        }else{
-            page.setCurrent(1);
+    //获取 投屏 信息
+    @Override
+    public List<ScreenEntity> getScreen(Integer layer){
+        return mapper.getScreen(layer);
+    }
+
+
+    //判断释放后的会议室 ，处于什么状态
+    private boolean isOrderState(Integer id){
+        boolean flag = true;
+        List<ScreenEntity> order = mapper.getOneMeetingScreen(id);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+        Date now = new Date();
+        Date end = null;
+        String endTime = null;
+        for (ScreenEntity entity:order) {
+            endTime = df.format(new Date()) + " "+entity.getEndTime();
+            try {
+                end = df.parse(endTime);
+            } catch (ParseException e) {
+                throw new ServiceException(e.getMessage());
+            }
+            int compareFlag = now.compareTo(end);
+            if(compareFlag > 0){
+                flag = false;
+                break;
+            }
         }
-//        Page<ScreenEntity> page1 = new Page<ScreenEntity>(page.getCurrent(),page.getSize());
-        return page.setRecords(this.mapper.getScreen(page,layer));
+
+        return flag;
     }
 }

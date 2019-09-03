@@ -24,8 +24,12 @@ public interface MeetingRoomService {
     //停用会议室
     int disable(Integer id);
 
-    //启用会议室
-//    int enable(Integer id);
+    //预定
+    int order(Integer id);
+
+    //取消预定
+    int unOrder(Integer id);
+
     //使用会议室
     int use(Integer id);
 
@@ -40,6 +44,6 @@ public interface MeetingRoomService {
      //条件 分页查询
      IPage<MeetingRoom> selectPage(PageCondition pageCondition);
 
-     //分页获取 投屏信息
-    IPage<ScreenEntity> getScreen(Integer layer,Integer currentPage);
+     //获取 投屏信息
+     List<ScreenEntity>  getScreen(Integer layer);
 }
