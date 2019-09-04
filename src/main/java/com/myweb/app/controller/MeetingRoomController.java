@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.myweb.app.core.Result;
 import com.myweb.app.core.ResultGenerator;
-import com.myweb.app.dao.MeeingRoomMapper;
 import com.myweb.app.entity.MeetingRoom;
 import com.myweb.app.entity.ScreenEntity;
 import com.myweb.app.service.MeetingRoomService;
@@ -17,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Api(value = "对会议室操作相关")
@@ -26,8 +26,6 @@ import java.util.Map;
 public class MeetingRoomController {
 
     private final MeetingRoomService meetingRoomService;
-    @Autowired
-    MeeingRoomMapper mapper;
     /**
      * 添加会议室
      */
@@ -47,7 +45,16 @@ public class MeetingRoomController {
         return i == 1 ? ResultGenerator.genSuccessResult(room) : ResultGenerator.genFailResult("修改会议室信息失败");
     }
     /**
-     * 更改会议室状态，使用会议室，将状态从可用变为使用中
+     * 变更会议室状态，预定 会议室，将状态从可用 变为 已预定
+     */
+    @GetMapping("/order")
+    public Result orderMeetingRoom(@RequestParam Integer id){
+        Preconditions.checkNotNull(id,"参数有误");
+        int i = meetingRoomService.order(id);
+        return i == 1 ? ResultGenerator.genSuccessResult() : ResultGenerator.genFailResult("使用会议室，变更状态失败");
+    }
+    /**
+     * 更改会议室状态，使用会议室，将状态预定中变为使用中
      */
     @GetMapping("/use")
     public Result useMeetingRoom(@RequestParam Integer id){
@@ -55,6 +62,7 @@ public class MeetingRoomController {
         int i = meetingRoomService.use(id);
         return i == 1 ? ResultGenerator.genSuccessResult() : ResultGenerator.genFailResult("使用会议室，变更状态失败");
     }
+
     /**
      * 更改会议室状态，释放会议室，将状态从使用中变为可用
      */
@@ -96,8 +104,8 @@ public class MeetingRoomController {
 
     //会议室的投屏信息
     @GetMapping("/getScreen")
-    public Result getScreen(Integer layer,Integer currentPage){//那座，第几页
-        IPage<ScreenEntity> rtn = meetingRoomService.getScreen(layer,currentPage);
+    public Result getScreen(Integer layer){//层数
+        List<ScreenEntity> rtn = meetingRoomService.getScreen(layer);
         return  ResultGenerator.genSuccessResult(rtn);
     }
 }

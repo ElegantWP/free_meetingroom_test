@@ -1,7 +1,7 @@
 package com.myweb.app.service.imp;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.myweb.app.dao.MeeingRoomMapper;
+import com.myweb.app.dao.MeetingRoomMapper;
 import com.myweb.app.entity.MeetingRoom;
 import com.myweb.app.service.MeetingStateService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MeetingStateServiceImpl implements MeetingStateService {
 
-    private final MeeingRoomMapper mapper;
+    private final MeetingRoomMapper mapper;
 
     /**
      * 会议室总数
