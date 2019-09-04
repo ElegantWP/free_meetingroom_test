@@ -23,7 +23,7 @@ public class UserPermissions {
     @TableField(value = "iType")
     private UserPermissionsTypeEnum type;
     @TableField(value = "iUserId")
-    private Long userId;
+    private String userId;
     @TableField(value = "dCreatedTime")
     private LocalDateTime createdTime;
     @TableField(value = "dModifyTime")

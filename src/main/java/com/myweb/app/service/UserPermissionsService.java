@@ -9,7 +9,7 @@ import com.myweb.app.entity.UserPermissions;
  */
 public interface UserPermissionsService {
 
-    UserPermissions getUserPermissions(Long userId);
+    UserPermissions getUserPermissions(String userId);
 
-    Result saveUserPermissions(Long userId,Integer type);
+    Result saveUserPermissions(String userId,Integer type);
 }

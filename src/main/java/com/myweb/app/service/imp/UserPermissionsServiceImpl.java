@@ -40,7 +40,7 @@ public class UserPermissionsServiceImpl implements UserPermissionsService {
      * @return
      */
     @Override
-    public UserPermissions getUserPermissions(Long userId) {
+    public UserPermissions getUserPermissions(String userId) {
         QueryWrapper<UserPermissions> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(null !=userId,"userId",userId);
         logger.info("【UserPermissionsServiceImpl】【getUserPermissions】查询条件  queryWrapper：{}",JSON.toJSONString(queryWrapper));
@@ -54,7 +54,7 @@ public class UserPermissionsServiceImpl implements UserPermissionsService {
      * @return
      */
     @Override
-    public Result saveUserPermissions(Long userId,Integer type) {
+    public Result saveUserPermissions(String userId,Integer type) {
         Boolean update = false;
         //新增，默认权限为普通用户
         UserPermissions userPermissions = new UserPermissions();
