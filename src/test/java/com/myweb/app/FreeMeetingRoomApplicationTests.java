@@ -148,4 +148,10 @@ public class FreeMeetingRoomApplicationTests {
 		);
 		System.out.println(str);
 	}
+
+	@Test
+	public void testOrg(){
+		List<Integer> org = Arrays.asList(1,12,123);
+		System.out.println(org.contains(2));
+	}
 }

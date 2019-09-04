@@ -141,7 +141,11 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
    */
   @Override
   public void addCorsMappings(CorsRegistry registry) {
-    //暂不考虑
+    registry.addMapping("/**")
+        .allowedOrigins("*")
+        .allowCredentials(true)
+        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        .maxAge(3600);
   }
 
   /**
